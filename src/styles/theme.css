@@ -2,23 +2,23 @@
 
 :root {
   --font-size: 16px;
-  --background: #ffffff;
+  --background: #FBF7F1;
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #221F1B;
+  --primary: #C2752E;
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.95 0.0058 264.53);
   --secondary-foreground: #221F1B;
-  --muted: #ececf0;
+  --muted: #F1ECE2;
   --muted-foreground: #8A8170;
-  --accent: #e9ebef;
+  --accent: #F1ECE2;
   --accent-foreground: #221F1B;
-  --destructive: #d4183d;
+  --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.1);
+  --border: #E7E0D2;
   --input: transparent;
   --input-background: #f3f3f5;
   --switch-background: #cbced4;
@@ -33,7 +33,7 @@
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #221F1B;
+  --sidebar-primary: #C2752E;
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
