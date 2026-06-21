@@ -29,17 +29,17 @@ export function ServerDetail({ server, onBack }: ServerDetailProps) {
           </button>
 
           <div className="bg-white border border-[#E7E0D2] rounded p-6">
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
               <div>
                 <h1 className="text-2xl text-[#221F1B] mb-2">{server.name}</h1>
                 <p className="text-[#8A8170]">{server.description}</p>
               </div>
-              <span className={`${getStatusColor(server.status)} px-3 py-1 rounded`}>
+              <span className={`${getStatusColor(server.status)} px-3 py-1 rounded flex-shrink-0`}>
                 {server.status}
               </span>
             </div>
 
-            <div className="grid grid-cols-4 gap-4 text-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
               <div>
                 <span className="text-[#8A8170]">Version</span>
                 <p className="text-[#221F1B]">{server.version}</p>
@@ -70,9 +70,9 @@ export function ServerDetail({ server, onBack }: ServerDetailProps) {
         {/* Policy View Toggle */}
         <div className="mb-6">
           <div className="bg-white border border-[#E7E0D2] rounded p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-lg text-[#221F1B]">Permission Policy View</h2>
-              <div className="flex items-center gap-2 bg-[#FBF7F1] rounded p-1">
+              <div className="flex items-center gap-2 bg-[#FBF7F1] rounded p-1 self-start">
                 <button
                   onClick={() => setViewMode('GRAPH')}
                   className={`flex items-center gap-2 px-4 py-2 rounded transition-colors ${

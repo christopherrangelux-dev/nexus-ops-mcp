@@ -23,7 +23,7 @@ export function ApprovalDiff({ server, onApprove, onReject }: ApprovalDiffProps)
         This MCP server is awaiting security review. Compare requested scopes against platform policy:
       </p>
 
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div className="bg-green-50 border border-green-200 rounded p-4">
           <div className="flex items-center gap-2 mb-3">
             <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -67,7 +67,7 @@ export function ApprovalDiff({ server, onApprove, onReject }: ApprovalDiffProps)
       </div>
 
       {onApprove && onReject && (
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button
             onClick={onApprove}
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"

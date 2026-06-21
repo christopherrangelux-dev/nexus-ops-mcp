@@ -22,7 +22,7 @@ export function ConnectionClipboard({ server }: ConnectionClipboardProps) {
 
   return (
     <div className="bg-white border border-[#E7E0D2] rounded p-4">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-3">
         <h3 className="text-[#221F1B]">Connection Configuration</h3>
         <div className="flex items-center gap-2">
           <div className="relative">

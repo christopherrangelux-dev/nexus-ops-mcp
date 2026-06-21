@@ -31,7 +31,7 @@ export function TableView({ server }: TableViewProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full">
           <thead className="bg-[#FBF7F1]">
             <tr>
@@ -79,6 +79,39 @@ export function TableView({ server }: TableViewProps) {
             })}
           </tbody>
         </table>
+
+        {filteredTools.length === 0 && (
+          <div className="text-center py-12 text-[#8A8170]">
+            No tools match your search criteria
+          </div>
+        )}
+      </div>
+
+      <div className="md:hidden divide-y divide-[#E7E0D2]">
+        {filteredTools.map((tool, index) => {
+          const isApproved = server.allowedScopes.includes(tool.scope);
+          const LockIcon = isApproved ? Unlock : Lock;
+
+          return (
+            <div key={`${tool.name}-${index}`} className="p-4">
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <code className="text-sm text-[#221F1B] bg-[#F1ECE2] px-2 py-1 rounded font-mono">
+                  {tool.name}
+                </code>
+                <span
+                  className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs flex-shrink-0 ${
+                    isApproved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}
+                >
+                  <LockIcon className="w-3 h-3" />
+                  {isApproved ? 'Approved' : 'Pending'}
+                </span>
+              </div>
+              <p className="text-sm text-[#221F1B] mb-2">{tool.description}</p>
+              <code className="text-xs text-[#8A8170] font-mono">{tool.scope}</code>
+            </div>
+          );
+        })}
 
         {filteredTools.length === 0 && (
           <div className="text-center py-12 text-[#8A8170]">

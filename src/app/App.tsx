@@ -6,7 +6,7 @@ import { ServerDetail } from './components/ServerDetail';
 import { ServerCreator } from './components/ServerCreator';
 import { mockServers, categories } from './components/mockData';
 import { MCPServer } from './components/types';
-import { Plus } from 'lucide-react';
+import { Plus, Menu } from 'lucide-react';
 
 type View = 'registry' | 'discovery' | 'detail' | 'create';
 
@@ -14,6 +14,7 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState('All Servers');
   const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null);
   const [currentView, setCurrentView] = useState<View>('discovery');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const filteredServers =
     selectedCategory === 'All Servers'
@@ -35,19 +36,33 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden md:flex-row">
       {(currentView === 'registry' || currentView === 'detail') && (
-        <Sidebar
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          categories={categories}
-        />
+        <>
+          <div className="md:hidden flex items-center gap-3 bg-white border-b border-[#E7E0D2] p-4 flex-shrink-0">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="text-[#221F1B]"
+              aria-label="Open menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <span className="text-sm text-[#8A8170]">MCP Registry</span>
+          </div>
+          <Sidebar
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            categories={categories}
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          />
+        </>
       )}
 
       {(currentView === 'registry' || currentView === 'discovery') && (
-        <div className="flex-1 flex flex-col">
-          <div className="bg-white border-b border-[#E7E0D2] p-4 flex items-center justify-between">
-            <div className="flex items-center gap-1 bg-[#FBF7F1] rounded p-1">
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="bg-white border-b border-[#E7E0D2] p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-1 bg-[#FBF7F1] rounded p-1 self-start">
               <button
                 onClick={() => setCurrentView('discovery')}
                 className={`px-4 py-1.5 rounded text-sm transition-colors ${

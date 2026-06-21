@@ -112,13 +112,13 @@ export function ServerCreator({ onBack, onSubmit }: ServerCreatorProps) {
           <span className="text-sm">Back to Registry</span>
         </button>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl text-[#221F1B]">Create New MCP Server</h1>
             <p className="text-sm text-[#8A8170]">Configure and validate your server before submitting for approval</p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2 bg-[#FBF7F1] rounded p-1">
               <button
                 onClick={() => setViewMode('FORM')}
@@ -156,7 +156,7 @@ export function ServerCreator({ onBack, onSubmit }: ServerCreatorProps) {
       </div>
 
       {/* Split Pane Content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {viewMode === 'FORM' ? (
           <>
             {/* Left: Form */}
@@ -188,7 +188,7 @@ export function ServerCreator({ onBack, onSubmit }: ServerCreatorProps) {
                       )}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm text-[#221F1B] mb-1">
                           Version *
@@ -367,7 +367,7 @@ export function ServerCreator({ onBack, onSubmit }: ServerCreatorProps) {
                 </div>
 
                 {/* Submit */}
-                <div className="flex items-center justify-between bg-white border border-[#E7E0D2] rounded p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between bg-white border border-[#E7E0D2] rounded p-4">
                   <div className="flex items-center gap-2">
                     {errors.length === 0 ? (
                       <>
@@ -398,7 +398,7 @@ export function ServerCreator({ onBack, onSubmit }: ServerCreatorProps) {
             </div>
 
             {/* Right: JSON Preview */}
-            <div className="w-[500px] border-l border-[#E7E0D2] bg-[#1E1E1E] p-6 overflow-y-auto">
+            <div className="w-full md:w-[500px] max-h-[40vh] md:max-h-none border-t md:border-t-0 md:border-l border-[#E7E0D2] bg-[#1E1E1E] p-6 overflow-y-auto">
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-sm text-[#8A8170]">JSON Preview</h3>
                 <span className="text-xs text-green-400">Read-only</span>
@@ -423,7 +423,7 @@ export function ServerCreator({ onBack, onSubmit }: ServerCreatorProps) {
             <textarea
               value={jsonCode}
               onChange={(e) => handleJsonChange(e.target.value)}
-              className="w-full h-[calc(100vh-200px)] bg-[#2E2E2E] text-green-400 font-mono text-sm p-4 rounded border border-[#3E3E3E] focus:outline-none focus:border-green-400"
+              className="w-full h-[60vh] md:h-[calc(100vh-200px)] bg-[#2E2E2E] text-green-400 font-mono text-sm p-4 rounded border border-[#3E3E3E] focus:outline-none focus:border-green-400"
               spellCheck={false}
             />
           </div>

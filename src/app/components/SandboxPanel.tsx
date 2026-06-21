@@ -87,7 +87,7 @@ export function SandboxPanel({ serverConfig, onClose }: SandboxPanelProps) {
   };
 
   return (
-    <div className="fixed right-0 top-0 h-screen w-[400px] bg-[#1E1E1E] shadow-2xl z-50 flex flex-col">
+    <div className="fixed right-0 top-0 h-screen w-full sm:w-[400px] bg-[#1E1E1E] shadow-2xl z-50 flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-[#3E3E3E]">
         <div className="flex items-center gap-2">

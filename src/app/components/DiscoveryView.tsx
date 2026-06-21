@@ -42,7 +42,7 @@ export function DiscoveryView({ servers }: DiscoveryViewProps) {
           <div className="bg-white border border-[#E7E0D2] rounded p-6 mb-6">
             <h1 className="text-2xl text-[#221F1B] mb-2">{selectedServer.name}</h1>
             <p className="text-[#8A8170] mb-4">{selectedServer.description}</p>
-            <div className="grid grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
               <div>
                 <span className="text-[#8A8170]">Version</span>
                 <p className="text-[#221F1B]">{selectedServer.version}</p>
