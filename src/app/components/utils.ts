@@ -15,6 +15,27 @@ export function getStatusColor(status: string): string {
   }
 }
 
+export function getAuditActionColor(action: string): string {
+  switch (action) {
+    case 'registered':
+      return 'bg-slate-500 text-white';
+    case 'approved':
+    case 'access_granted':
+    case 'reactivated':
+      return 'bg-blue-600 text-white';
+    case 'rejected':
+    case 'access_revoked':
+    case 'deactivated':
+      return 'bg-red-600 text-white';
+    case 'access_requested':
+      return 'bg-amber-500 text-white';
+    case 'agent_connected':
+      return 'bg-emerald-600 text-white';
+    default:
+      return 'bg-gray-500 text-white';
+  }
+}
+
 export function generateConnectionConfig(server: any, format: 'JSON' | 'YAML' | 'SHELL'): string {
   if (format === 'JSON') {
     return JSON.stringify(

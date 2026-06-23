@@ -15,6 +15,7 @@ export interface ServerConfig {
     description: string;
     scope: string;
   }>;
+  accessPolicy: Record<string, 'auto' | 'manual'>;
 }
 
 export function validateServerConfig(config: ServerConfig): ValidationError[] {

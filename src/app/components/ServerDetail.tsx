@@ -6,6 +6,8 @@ import { TableView } from './TableView';
 import { ConnectionClipboard } from './ConnectionClipboard';
 import { ApprovalDiff } from './ApprovalDiff';
 import { getStatusColor } from './utils';
+import { mockAuditEntries } from './mockData';
+import { AuditHistoryTable } from './lifecycle/AuditHistoryTable';
 
 interface ServerDetailProps {
   server: MCPServer;
@@ -113,6 +115,16 @@ export function ServerDetail({ server, onBack }: ServerDetailProps) {
         {server.status === 'APPROVED' && (
           <ConnectionClipboard server={server} />
         )}
+
+        {/* History (always visible, regardless of status) */}
+        <div className="mt-6">
+          <h2 className="text-lg text-[#221F1B] mb-3">History</h2>
+          <AuditHistoryTable
+            entries={mockAuditEntries
+              .filter((entry) => entry.serverId === server.id)
+              .sort((a, b) => new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime())}
+          />
+        </div>
       </div>
     </div>
   );

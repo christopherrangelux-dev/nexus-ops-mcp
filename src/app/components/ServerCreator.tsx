@@ -25,6 +25,7 @@ export function ServerCreator({ onBack, onSubmit }: ServerCreatorProps) {
     maintainer: '',
     connectionString: '',
     tools: [],
+    accessPolicy: {},
   });
 
   const [jsonCode, setJsonCode] = useState('');
