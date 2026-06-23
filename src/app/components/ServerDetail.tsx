@@ -6,8 +6,9 @@ import { TableView } from './TableView';
 import { ConnectionClipboard } from './ConnectionClipboard';
 import { ApprovalDiff } from './ApprovalDiff';
 import { getStatusColor } from './utils';
-import { mockAuditEntries } from './mockData';
+import { mockAuditEntries, mockAgentConnections } from './mockData';
 import { AuditHistoryTable } from './lifecycle/AuditHistoryTable';
+import { AgentConnectionsPanel } from './lifecycle/AgentConnectionsPanel';
 
 interface ServerDetailProps {
   server: MCPServer;
@@ -114,6 +115,18 @@ export function ServerDetail({ server, onBack }: ServerDetailProps) {
         {/* Connection Config (only for approved servers) */}
         {server.status === 'APPROVED' && (
           <ConnectionClipboard server={server} />
+        )}
+
+        {/* Agent Connections (approved or deactivated servers) */}
+        {(server.status === 'APPROVED' || server.status === 'DEACTIVATED') && (
+          <div className="mt-6">
+            <h2 className="text-lg text-[#221F1B] mb-3">Agent Connections</h2>
+            <AgentConnectionsPanel
+              connections={mockAgentConnections
+                .filter((connection) => connection.serverId === server.id)
+                .sort((a, b) => new Date(b.lastActiveAt).getTime() - new Date(a.lastActiveAt).getTime())}
+            />
+          </div>
         )}
 
         {/* History (always visible, regardless of status) */}
