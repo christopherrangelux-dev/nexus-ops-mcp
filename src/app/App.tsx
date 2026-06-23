@@ -15,11 +15,12 @@ export default function App() {
   const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null);
   const [currentView, setCurrentView] = useState<View>('discovery');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [servers, setServers] = useState<MCPServer[]>(mockServers);
 
   const filteredServers =
     selectedCategory === 'All Servers'
-      ? mockServers
-      : mockServers.filter((server) => server.category === selectedCategory);
+      ? servers
+      : servers.filter((server) => server.category === selectedCategory);
 
   const handleServerSelect = (server: MCPServer) => {
     setSelectedServer(server);
@@ -34,6 +35,8 @@ export default function App() {
     setSelectedServer(null);
     setCurrentView('registry');
   };
+
+  const handleRegisterServer = (server: MCPServer) => setServers((prev) => [server, ...prev]);
 
   return (
     <div className="flex flex-col h-screen overflow-hidden md:flex-row">
@@ -97,7 +100,7 @@ export default function App() {
           </div>
 
           {currentView === 'discovery' ? (
-            <DiscoveryView servers={mockServers} />
+            <DiscoveryView servers={servers} />
           ) : (
             <RegistryView
               servers={filteredServers}
@@ -117,6 +120,7 @@ export default function App() {
       {currentView === 'create' && (
         <ServerCreator
           onBack={handleBackToRegistry}
+          onSubmit={handleRegisterServer}
         />
       )}
     </div>
