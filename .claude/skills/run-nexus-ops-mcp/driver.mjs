@@ -113,6 +113,13 @@ const COMMANDS = {
 		}
 	},
 
+	async resize(dims) {
+		if (!page) return console.log('ERROR: launch first');
+		const [w, h] = dims.split(/\s+/).map(Number);
+		await page.setViewportSize({ width: w, height: h || 800 });
+		console.log('resized to', w, 'x', h || 800);
+	},
+
 	async type(text) {
 		if (page) await page.keyboard.type(text, { delay: 20 });
 	},

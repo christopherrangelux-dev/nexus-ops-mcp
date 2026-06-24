@@ -46,6 +46,7 @@ For interactive back-and-forth instead of a fixed script, run it without a hered
 | `click-text <text>` | click the first element containing `<text>`, same settle wait |
 | `ss [name]` | screenshot → `/tmp/shots/<name>.png` |
 | `hover <css-sel>` | hover an element |
+| `resize <width> <height>` | resize the viewport (e.g. `resize 375 800` for a mobile check) |
 | `type <text>` / `press <key>` | keyboard input (e.g. `press Enter`, `press Tab`) |
 | `wait <css-sel>` | wait up to 10s for a selector to appear |
 | `eval <js>` | evaluate an expression in the page, print JSON |
