@@ -13,10 +13,37 @@ import { AgentConnectionsPanel } from './lifecycle/AgentConnectionsPanel';
 interface ServerDetailProps {
   server: MCPServer;
   onBack: () => void;
+  onUpdateStatus: (serverId: string, status: 'APPROVED' | 'DEACTIVATED') => void;
 }
 
-export function ServerDetail({ server, onBack }: ServerDetailProps) {
+export function ServerDetail({ server, onBack, onUpdateStatus }: ServerDetailProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('GRAPH');
+  const [confirmingDeactivate, setConfirmingDeactivate] = useState(false);
+
+  const handleConfirmDeactivate = () => {
+    onUpdateStatus(server.id, 'DEACTIVATED');
+    mockAuditEntries.push({
+      id: `audit-${Date.now().toString(36)}`,
+      serverId: server.id,
+      action: 'deactivated',
+      actor: 'Security Engineering',
+      occurredAt: '2026-04-27T10:00:00Z',
+      detail: `${server.name} deactivated — developer access revoked.`,
+    });
+    setConfirmingDeactivate(false);
+  };
+
+  const handleReactivate = () => {
+    onUpdateStatus(server.id, 'APPROVED');
+    mockAuditEntries.push({
+      id: `audit-${Date.now().toString(36)}`,
+      serverId: server.id,
+      action: 'reactivated',
+      actor: 'Security Engineering',
+      occurredAt: '2026-04-27T10:00:00Z',
+      detail: `${server.name} reactivated — developer access restored.`,
+    });
+  };
 
   return (
     <div className="flex-1 overflow-y-auto bg-[#FBF7F1]">
@@ -60,6 +87,50 @@ export function ServerDetail({ server, onBack }: ServerDetailProps) {
                 <p className="text-[#221F1B]">{server.lastUpdated}</p>
               </div>
             </div>
+
+            {server.status === 'APPROVED' && (
+              <div className="border-t border-[#E7E0D2] mt-4 pt-4 flex justify-end">
+                {confirmingDeactivate ? (
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end w-full">
+                    <p className="text-sm text-[#221F1B]">
+                      Deactivate this server? Developers will lose access immediately.
+                    </p>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => setConfirmingDeactivate(false)}
+                        className="px-4 py-2 border border-[#E7E0D2] text-[#221F1B] rounded hover:bg-[#FBF7F1] transition-colors text-sm"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleConfirmDeactivate}
+                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm"
+                      >
+                        Confirm Deactivation
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setConfirmingDeactivate(true)}
+                    className="px-4 py-2 border border-[#E7E0D2] text-[#221F1B] rounded hover:bg-[#FBF7F1] transition-colors text-sm"
+                  >
+                    Deactivate
+                  </button>
+                )}
+              </div>
+            )}
+
+            {server.status === 'DEACTIVATED' && (
+              <div className="border-t border-[#E7E0D2] mt-4 pt-4 flex justify-end">
+                <button
+                  onClick={handleReactivate}
+                  className="px-4 py-2 bg-[#C2752E] text-white rounded hover:bg-[#9C5E25] transition-colors text-sm"
+                >
+                  Reactivate
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

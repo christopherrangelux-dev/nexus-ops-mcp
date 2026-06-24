@@ -10,6 +10,8 @@ export function getStatusColor(status: string): string {
       return 'bg-amber-500 text-white';
     case 'REJECTED':
       return 'bg-red-600 text-white';
+    case 'DEACTIVATED':
+      return 'bg-gray-500 text-white';
     default:
       return 'bg-gray-500 text-white';
   }

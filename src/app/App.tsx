@@ -12,11 +12,13 @@ type View = 'registry' | 'discovery' | 'detail' | 'create';
 
 export default function App() {
   const [selectedCategory, setSelectedCategory] = useState('All Servers');
-  const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null);
+  const [selectedServerId, setSelectedServerId] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<View>('discovery');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [servers, setServers] = useState<MCPServer[]>(mockServers);
   const [accessGrants, setAccessGrants] = useState<AccessGrant[]>(mockAccessGrants);
+
+  const selectedServer = servers.find((s) => s.id === selectedServerId) ?? null;
 
   const filteredServers =
     selectedCategory === 'All Servers'
@@ -24,7 +26,7 @@ export default function App() {
       : servers.filter((server) => server.category === selectedCategory);
 
   const handleServerSelect = (server: MCPServer) => {
-    setSelectedServer(server);
+    setSelectedServerId(server.id);
     setCurrentView('detail');
   };
 
@@ -33,7 +35,7 @@ export default function App() {
   };
 
   const handleBackToRegistry = () => {
-    setSelectedServer(null);
+    setSelectedServerId(null);
     setCurrentView('registry');
   };
 
@@ -47,6 +49,9 @@ export default function App() {
         g.id === grantId ? { ...g, status: decision, resolvedAt: '2026-04-26T11:00:00Z' } : g
       )
     );
+
+  const handleUpdateServerStatus = (serverId: string, status: 'APPROVED' | 'DEACTIVATED') =>
+    setServers((prev) => prev.map((s) => (s.id === serverId ? { ...s, status } : s)));
 
   return (
     <div className="flex flex-col h-screen overflow-hidden md:flex-row">
@@ -131,6 +136,7 @@ export default function App() {
         <ServerDetail
           server={selectedServer}
           onBack={handleBackToRegistry}
+          onUpdateStatus={handleUpdateServerStatus}
         />
       )}
 
