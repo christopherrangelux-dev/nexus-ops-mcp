@@ -1,16 +1,20 @@
 import { useState } from 'react';
-import { ArrowLeft, Search, CheckCircle2 } from 'lucide-react';
-import { MCPServer } from './types';
+import { ArrowLeft, Search, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { MCPServer, AccessGrant } from './types';
 import { ServerDirectoryCard } from './ServerDirectoryCard';
+import { mockAuditEntries } from './mockData';
 
 interface DiscoveryViewProps {
   servers: MCPServer[];
+  accessGrants: AccessGrant[];
+  onCreateGrant: (grant: AccessGrant) => void;
 }
 
-export function DiscoveryView({ servers }: DiscoveryViewProps) {
+const SELF_SERVICE_REQUESTER = 'Requesting Team';
+
+export function DiscoveryView({ servers, accessGrants, onCreateGrant }: DiscoveryViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedServer, setSelectedServer] = useState<MCPServer | null>(null);
-  const [requestedIds, setRequestedIds] = useState<Set<string>>(new Set());
 
   const availableServers = servers.filter((server) => server.status === 'APPROVED');
 
@@ -21,12 +25,37 @@ export function DiscoveryView({ servers }: DiscoveryViewProps) {
       server.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleRequestAccess = (id: string) => {
-    setRequestedIds((prev) => new Set(prev).add(id));
+  const requestAccess = (server: MCPServer, scope: string) => {
+    const policy = server.accessPolicy[scope] ?? 'manual';
+    const isAuto = policy === 'auto';
+
+    const newGrant: AccessGrant = {
+      id: `grant-${Date.now().toString(36)}`,
+      serverId: server.id,
+      scope,
+      requestedBy: SELF_SERVICE_REQUESTER,
+      requestedAt: '2026-04-26T09:00:00Z',
+      ...(isAuto
+        ? { status: 'approved' as const, resolvedAt: '2026-04-26T09:00:00Z' }
+        : { status: 'pending' as const }),
+    };
+
+    onCreateGrant(newGrant);
+
+    mockAuditEntries.push({
+      id: `audit-${Date.now().toString(36)}`,
+      serverId: server.id,
+      action: isAuto ? 'access_granted' : 'access_requested',
+      actor: SELF_SERVICE_REQUESTER,
+      occurredAt: '2026-04-26T09:00:00Z',
+      detail: isAuto
+        ? `Auto-approved '${scope}' for ${SELF_SERVICE_REQUESTER}.`
+        : `${SELF_SERVICE_REQUESTER} requested '${scope}'.`,
+    });
   };
 
   if (selectedServer) {
-    const isRequested = requestedIds.has(selectedServer.id);
+    const uniqueScopes = [...new Set(selectedServer.tools.map((t) => t.scope))];
 
     return (
       <div className="flex-1 overflow-y-auto bg-[#FBF7F1]">
@@ -70,19 +99,68 @@ export function DiscoveryView({ servers }: DiscoveryViewProps) {
             </ul>
           </div>
 
-          {isRequested ? (
-            <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded p-4 text-green-800">
-              <CheckCircle2 className="w-5 h-5" />
-              <span className="text-sm">Access request submitted — you'll be notified once approved.</span>
-            </div>
-          ) : (
-            <button
-              onClick={() => handleRequestAccess(selectedServer.id)}
-              className="px-6 py-2 bg-[#C2752E] text-white rounded hover:bg-[#9C5E25] transition-colors"
-            >
-              Request Access
-            </button>
-          )}
+          <div className="bg-white border border-[#E7E0D2] rounded p-6">
+            <h2 className="text-lg text-[#221F1B] mb-4">Access</h2>
+            <ul className="space-y-3">
+              {uniqueScopes.map((scope) => {
+                const grant = accessGrants.find(
+                  (g) =>
+                    g.serverId === selectedServer.id &&
+                    g.scope === scope &&
+                    g.requestedBy === SELF_SERVICE_REQUESTER
+                );
+
+                return (
+                  <li
+                    key={scope}
+                    className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#E7E0D2] pb-3 last:border-0 last:pb-0"
+                  >
+                    <span className="inline-block px-3 py-1 bg-[#ECE9F3] text-[#382B5F] rounded-full text-sm self-start sm:self-auto">
+                      {scope}
+                    </span>
+
+                    {!grant && (
+                      <button
+                        onClick={() => requestAccess(selectedServer, scope)}
+                        className="px-4 py-2 bg-[#C2752E] text-white rounded hover:bg-[#9C5E25] transition-colors text-sm self-start sm:self-auto"
+                      >
+                        Request Access
+                      </button>
+                    )}
+
+                    {grant && grant.status === 'pending' && (
+                      <span className="flex items-center gap-2 bg-amber-500 text-white px-3 py-1 rounded-full text-sm self-start sm:self-auto">
+                        <Clock className="w-4 h-4" />
+                        Awaiting approval
+                      </span>
+                    )}
+
+                    {grant && grant.status === 'approved' && (
+                      <span className="flex items-center gap-2 text-green-700 self-start sm:self-auto">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span className="text-sm">Access granted</span>
+                      </span>
+                    )}
+
+                    {grant && (grant.status === 'rejected' || grant.status === 'revoked') && (
+                      <div className="flex items-center gap-3 self-start sm:self-auto">
+                        <span className="flex items-center gap-2 text-red-700">
+                          <XCircle className="w-4 h-4" />
+                          <span className="text-sm">Access denied</span>
+                        </span>
+                        <button
+                          onClick={() => requestAccess(selectedServer, scope)}
+                          className="px-4 py-2 bg-[#C2752E] text-white rounded hover:bg-[#9C5E25] transition-colors text-sm"
+                        >
+                          Request Again
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
       </div>
     );

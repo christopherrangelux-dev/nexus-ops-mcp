@@ -1,14 +1,25 @@
 import { Search } from 'lucide-react';
-import { MCPServer } from './types';
+import { MCPServer, AccessGrant } from './types';
 import { ServerCard } from './ServerCard';
+import { mockAuditEntries } from './mockData';
+import { AccessRequestQueue } from './lifecycle/AccessRequestQueue';
 import { useState } from 'react';
 
 interface RegistryViewProps {
   servers: MCPServer[];
+  allServers: MCPServer[];
+  accessGrants: AccessGrant[];
   onServerSelect: (server: MCPServer) => void;
+  onResolveGrant: (grantId: string, decision: 'approved' | 'revoked') => void;
 }
 
-export function RegistryView({ servers, onServerSelect }: RegistryViewProps) {
+export function RegistryView({
+  servers,
+  allServers,
+  accessGrants,
+  onServerSelect,
+  onResolveGrant,
+}: RegistryViewProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredServers = servers.filter(
@@ -17,6 +28,30 @@ export function RegistryView({ servers, onServerSelect }: RegistryViewProps) {
       server.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       server.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleApprove = (grant: AccessGrant) => {
+    onResolveGrant(grant.id, 'approved');
+    mockAuditEntries.push({
+      id: `audit-${Date.now().toString(36)}`,
+      serverId: grant.serverId,
+      action: 'access_granted',
+      actor: 'Security Engineering',
+      occurredAt: '2026-04-26T11:00:00Z',
+      detail: `Granted '${grant.scope}' to ${grant.requestedBy}.`,
+    });
+  };
+
+  const handleReject = (grant: AccessGrant) => {
+    onResolveGrant(grant.id, 'revoked');
+    mockAuditEntries.push({
+      id: `audit-${Date.now().toString(36)}`,
+      serverId: grant.serverId,
+      action: 'access_revoked',
+      actor: 'Security Engineering',
+      occurredAt: '2026-04-26T11:00:00Z',
+      detail: `Revoked '${grant.scope}' request from ${grant.requestedBy}.`,
+    });
+  };
 
   return (
     <div className="flex-1 overflow-y-auto bg-[#FBF7F1]">
@@ -27,6 +62,13 @@ export function RegistryView({ servers, onServerSelect }: RegistryViewProps) {
             Discover and deploy secure, vetted Model Context Protocol servers across your platform
           </p>
         </div>
+
+        <AccessRequestQueue
+          grants={accessGrants}
+          allServers={allServers}
+          onApprove={handleApprove}
+          onReject={handleReject}
+        />
 
         <div className="mb-6">
           <div className="relative">

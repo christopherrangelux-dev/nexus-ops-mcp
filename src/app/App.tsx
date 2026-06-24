@@ -4,8 +4,8 @@ import { RegistryView } from './components/RegistryView';
 import { DiscoveryView } from './components/DiscoveryView';
 import { ServerDetail } from './components/ServerDetail';
 import { ServerCreator } from './components/ServerCreator';
-import { mockServers, categories } from './components/mockData';
-import { MCPServer } from './components/types';
+import { mockServers, mockAccessGrants, categories } from './components/mockData';
+import { MCPServer, AccessGrant } from './components/types';
 import { Plus, Menu } from 'lucide-react';
 
 type View = 'registry' | 'discovery' | 'detail' | 'create';
@@ -16,6 +16,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState<View>('discovery');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [servers, setServers] = useState<MCPServer[]>(mockServers);
+  const [accessGrants, setAccessGrants] = useState<AccessGrant[]>(mockAccessGrants);
 
   const filteredServers =
     selectedCategory === 'All Servers'
@@ -37,6 +38,15 @@ export default function App() {
   };
 
   const handleRegisterServer = (server: MCPServer) => setServers((prev) => [server, ...prev]);
+
+  const handleCreateAccessGrant = (grant: AccessGrant) => setAccessGrants((prev) => [grant, ...prev]);
+
+  const handleResolveAccessGrant = (grantId: string, decision: 'approved' | 'revoked') =>
+    setAccessGrants((prev) =>
+      prev.map((g) =>
+        g.id === grantId ? { ...g, status: decision, resolvedAt: '2026-04-26T11:00:00Z' } : g
+      )
+    );
 
   return (
     <div className="flex flex-col h-screen overflow-hidden md:flex-row">
@@ -100,11 +110,18 @@ export default function App() {
           </div>
 
           {currentView === 'discovery' ? (
-            <DiscoveryView servers={servers} />
+            <DiscoveryView
+              servers={servers}
+              accessGrants={accessGrants}
+              onCreateGrant={handleCreateAccessGrant}
+            />
           ) : (
             <RegistryView
               servers={filteredServers}
+              allServers={servers}
+              accessGrants={accessGrants}
               onServerSelect={handleServerSelect}
+              onResolveGrant={handleResolveAccessGrant}
             />
           )}
         </div>
